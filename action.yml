@@ -73,7 +73,9 @@ runs:
         INPUT_ATTRIBUTES: ${{ inputs.ATTRIBUTES }}
         INPUT_AGENT_IDS: ${{ inputs.AGENT_IDS }}
       run: |
-        VERSION="$(tr -d '[:space:]' < "${{ github.action_path }}/VERSION")"
+        # TEST BRANCH ONLY: build the image from this checkout instead of pulling
+        # docker.io/livekit/cloud-agents-github-plugin:${VERSION}
+        docker build -q -t cloud-agents-github-plugin:test-multi-env "${{ github.action_path }}"
         docker run --rm \
           -v /tmp/shared:/tmp/shared \
           -e INPUT_OPERATION="${{ inputs.OPERATION }}" \
@@ -94,4 +96,4 @@ runs:
           -e GITHUB_RUN_ID="${{ github.run_id }}" \
           -v "${{ github.workspace }}:/workspace" \
           -w "/workspace" \
-          "docker.io/livekit/cloud-agents-github-plugin:${VERSION}"
+          "cloud-agents-github-plugin:test-multi-env"
